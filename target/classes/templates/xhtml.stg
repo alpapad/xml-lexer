@@ -1,0 +1,17 @@
+delimiters "$", "$"
+
+html(namespaces)::=<<
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  $namespaces.keys, namespaces.values:{n,p|  $ xlmns(n,p)$}$>
+	<head jsf:id="head">
+	</head>
+	<body jsf:id="body">
+		<form jsf:id="form">
+		</form>
+	</body>
+</html>
+
+>>
+
+xlmns(n,p)::= "   xlmns:$n$=\"$p$\""

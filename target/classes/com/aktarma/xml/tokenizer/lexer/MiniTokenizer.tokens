@@ -1,0 +1,17 @@
+SCRIPT_OPEN=1
+SCRIPT_CLOSE=2
+STYLE_OPEN=3
+STYLE_CLOSE=4
+TEXT=5
+TAG_CLOSE=6
+TAG_SELF_CLOSE=7
+EQUALS=8
+ATTR=9
+SPACE=10
+ATTRVAL=11
+'<script'=1
+'</script'=2
+'<style'=3
+'</style'=4
+'>'=6
+'/>'=7
