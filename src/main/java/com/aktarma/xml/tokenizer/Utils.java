@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.aktarma.xml.tokenizer.parser.MixedHtmlParser;
+import com.aktarma.xml.tokenizer.process.JsfTagsCollector;
 import com.aktarma.xml.tokenizer.process.JspTaglibsCollector;
 import com.aktarma.xml.tokenizer.process.StringSink;
 import com.aktarma.xml.tokenizer.process.TokenChainSink;
@@ -48,6 +49,7 @@ public class Utils {
             }
             return lines;
     }
+    public static JsfTagsCollector  jsft = new JsfTagsCollector();
     
     public static String parseFile(File f) throws IOException{
 		//System.err.println(f.getAbsolutePath());
@@ -55,15 +57,16 @@ public class Utils {
 		TokenCollectorSink collector = new TokenCollectorSink();
 		
 		JspTaglibsCollector taglibs = new JspTaglibsCollector();
-
+		
 		TokenChainSink sink = new TokenChainSink();
 		sink.addVisitor(collector);
 		sink.addVisitor(taglibs);
+		sink.addVisitor(jsft);
 
 		MixedHtmlParser.processFile(f.getAbsolutePath(), sink);
 		//LexLuthor.processFile("C:/WORK/projects/xml-lexer/aa.jsp", sink);
 
-		//System.err.println(f.getAbsolutePath() + " ---> " + taglibs);
+		System.err.println(f.getAbsolutePath() + " ---> " + taglibs);
 		
 		for (TokenPart token : collector.getCollected()) {
 			TokenType.visitType(s, token);

@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 
-	<groupId>com.alex.papas</groupId>
-	<artifactId>lex-louthor</artifactId>
+	<groupId>com.aktarma.xml</groupId>
+	<artifactId>tokenizer</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>XML Lexer</name>
+	<name>Kind of XhtML streaming Lexer</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -7,6 +7,7 @@ import com.aktarma.xml.tokenizer.tokens.elements.TaglibToken;
 
 public class JspTaglibsCollector extends AbstractTokenVisitor {
 
+
 	private final List<TaglibToken> tagLibs = new ArrayList<>();
 
 	@Override

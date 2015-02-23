@@ -8,6 +8,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 
+import com.aktarma.xml.tokenizer.process.JsfTagsCollector.JsfTags;
+
 public class ScanDir {
 
 	public static void main(String[] args) throws IOException {
@@ -23,5 +25,9 @@ public class ScanDir {
 			
 			Utils.diff(f.getAbsolutePath(), parsed);
 		}
+		for(JsfTags t:Utils.jsft.getTags()){
+			System.err.println(t.getUri()  + " --> " + t.getTag() + " (" + t.getCount() + " times):" + t.getAttrs());
+		}
+		System.err.println(Utils.jsft.toString());
 	}
 }
