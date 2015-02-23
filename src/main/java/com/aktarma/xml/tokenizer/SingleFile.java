@@ -9,8 +9,7 @@ public class SingleFile {
 
 	public static void main(String[] args) throws IOException {
 		StringSink.debug = true;
-		File f = new File("/home/alpapad/rit/xml-lexer/aa.jsp");//"/home/alpapad/rit/webapp/webapp/secure/raw/dossier/cl/update_harmonized_entry.jsp");
-		//File f = new File("/home/alpapad/rit/webapp/webapp/secure/raw/dossier/cl/update_harmonized_entry.jsp");
+		File f = new File("/home/alpapad/rit/xml-lexer/aa.jsp");
 		
 		String parsed = Utils.parseFile(f);
 		
