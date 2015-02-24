@@ -18,6 +18,7 @@ public class TestGroovy {
 
 	private static void test(String f) throws CompilationFailedException, IOException, InstantiationException, IllegalAccessException {
 		// TODO Auto-generated method stub
+		@SuppressWarnings("resource")
 		GroovyClassLoader gcl = new GroovyClassLoader();
 		Class<?> clazz = gcl.parseClass(new File("C:/WORK/projects/aktarma.xml-lexer/src/main/java/com/aktarma/" +f +".groovy"));
 		Object aScript = clazz.newInstance();

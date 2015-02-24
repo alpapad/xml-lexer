@@ -1,15 +1,7 @@
 package com.aktarma.xml.tokenizer.scripting;
 
-import groovy.lang.GroovyClassLoader;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.codehaus.groovy.control.CompilationFailedException;
 
 
 public class JsfTag {
@@ -22,10 +14,10 @@ public class JsfTag {
 
 	private final NsTagVisitor visitor;
 	
-	public JsfTag(String uri, String tag) {
+	public JsfTag(String uri, String tag, NsTagVisitor visitor) {
 		this.uri = uri;
 		this.tag = tag;
-		this.visitor = visitor(uri, tag);
+		this.visitor = visitor;
 	}
 
 	public String getUri() {
@@ -65,48 +57,6 @@ public class JsfTag {
 		return "JsfTag [uri=" + uri + ", tag=" + tag + "]";
 	}
 
-	private final static NsTagVisitor visitor(String uri, String tag) {
-		URI u;
-		try {
-			u = new URI(uri);
-
-//			if (!("java.sun.com".equalsIgnoreCase(u.getHost())
-//					|| "www.echa.eu".equalsIgnoreCase(u.getHost()) || null == u
-//						.getHost())) {
-				File baseDir = new File( "C:/WORK/projects/aktarma.xml-lexer/other");
-				String host =  u.getHost();
-				String path = u.getPath();
-				if(host == null) {
-					host = "null";
-				}
-				if(path == null) {
-					path = null;
-				}
-				File dir = new File(baseDir, host + path);
-				
-				
-				//String name = host + path.replace('/', '.') + "." + tag ;
-				
-				final String names = "pp" + tag;
-				File f = new File(dir, names + ".groovy");
-				
-
-				@SuppressWarnings("resource")
-				GroovyClassLoader gcl = new GroovyClassLoader();
-				Class<?> clazz = gcl.parseClass(f);
-				Object aScript = clazz.newInstance();
-				System.err.println(aScript.getClass().getSuperclass());
-				return  (NsTagVisitor) aScript;
-//			} 
-		} catch (IllegalAccessException | InstantiationException | URISyntaxException | CompilationFailedException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		
-		return new NsTagVisitor();
-	}
-
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

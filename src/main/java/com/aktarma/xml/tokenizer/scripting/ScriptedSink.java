@@ -7,15 +7,15 @@ import com.aktarma.xml.tokenizer.process.AbstractTokenVisitor;
 import com.aktarma.xml.tokenizer.tokens.NsElementPart;
 import com.aktarma.xml.tokenizer.tokens.TokenPart;
 import com.aktarma.xml.tokenizer.tokens.elements.AbstractElementToken;
-import com.aktarma.xml.tokenizer.tokens.elements.NsTagEndToken;
-import com.aktarma.xml.tokenizer.tokens.elements.NsTagStartToken;
-import com.aktarma.xml.tokenizer.tokens.elements.TagEndToken;
 import com.aktarma.xml.tokenizer.tokens.elements.CssEndToken;
 import com.aktarma.xml.tokenizer.tokens.elements.CssStartToken;
 import com.aktarma.xml.tokenizer.tokens.elements.JSPIncludeToken;
-import com.aktarma.xml.tokenizer.tokens.elements.TagStartToken;
+import com.aktarma.xml.tokenizer.tokens.elements.NsTagEndToken;
+import com.aktarma.xml.tokenizer.tokens.elements.NsTagStartToken;
 import com.aktarma.xml.tokenizer.tokens.elements.ScriptEndToken;
 import com.aktarma.xml.tokenizer.tokens.elements.ScriptStartToken;
+import com.aktarma.xml.tokenizer.tokens.elements.TagEndToken;
+import com.aktarma.xml.tokenizer.tokens.elements.TagStartToken;
 import com.aktarma.xml.tokenizer.tokens.elements.TaglibToken;
 import com.aktarma.xml.tokenizer.tokens.parts.ElAttritbutePart;
 import com.aktarma.xml.tokenizer.tokens.parts.ElInvalidPart;
@@ -37,6 +37,12 @@ public class ScriptedSink extends AbstractTokenVisitor {
 	public static boolean debug = false;
 
 	public static Map<String, JsfTagLibg> tagLibs = new HashMap<>();
+
+	private final String basePath;
+
+	public ScriptedSink(String basePath) {
+		this.basePath = basePath;
+	}
 
 	public String text() {
 		return sb.toString();
@@ -121,38 +127,34 @@ public class ScriptedSink extends AbstractTokenVisitor {
 		return visitElementToken(token);
 	}
 
-	// @Override
-	// public boolean visit(TaglibToken taglib) {
-	// return visitElementToken(taglib);
-	// }
-
 	@Override
 	public boolean visit(TaglibToken taglib) {
 		String prefix = fixNs(taglib.getPrefix());
 		String uri = fixUri(taglib.getUri());
 
 		if (!tagLibs.containsKey(prefix)) {
-			JsfTagLibg tgLib = new JsfTagLibg(prefix, uri);
+			JsfTagLibg tgLib = new JsfTagLibg(basePath,prefix, uri);
 			tagLibs.put(prefix, tgLib);
 		}
 		return visitElementToken(taglib);
 	}
 
-	private static NsTagVisitor get(String prefix, String tag){
-		prefix=  fixNs(prefix);
-		tag =  fixUri(tag);
+	private NsTagVisitor get(String prefix, String tag) {
+		prefix = fixNs(prefix);
+		tag = fixUri(tag);
 
 		if (!tagLibs.containsKey(prefix)) {
-			
-			JsfTagLibg tgLib = new JsfTagLibg(prefix, "");
+
+			JsfTagLibg tgLib = new JsfTagLibg(basePath, prefix, "");
 			tagLibs.put(prefix, tgLib);
 			return tgLib.tag(tag);
 		} else {
 			return tagLibs.get(prefix).tag(tag);
 		}
 	}
-	
-	
+
+
+
 	private static String fixNs(String ns) {
 		if (ns == null) {
 			ns = "";
@@ -237,8 +239,7 @@ public class ScriptedSink extends AbstractTokenVisitor {
 			sb.append("<!-- AttrValPart -->");
 		}
 		if (token.getName() != null) {
-			renderAttribute(sb, token.getName(), token.getOperator(),
-					token.getValue());
+			renderAttribute(sb, token.getName(), token.getOperator(), token.getValue());
 		}
 		return true;// visit((TokenPart) token);
 	}
@@ -261,27 +262,17 @@ public class ScriptedSink extends AbstractTokenVisitor {
 		return false;
 	}
 
-	private static void renderAttribute(StringBuilder buffer, String qname,
-			String eq, String value) {
+	private static void renderAttribute(StringBuilder buffer, String qname, String eq, String value) {
 		if (value == null || value.trim().length() == 0) {
-			buffer.append(qname);// .append(' ');
+			buffer.append(qname);
 		} else {
-			buffer.append(qname).append(eq).append(escapeAttributeValue(value));// .append("\"");
+			buffer.append(qname).append(eq).append(value);
 		}
-	}
-
-	private static String escapeAttributeValue(String value) {
-		if (value == null) {
-			return "";
-		}
-		return value;// .replace("&", "&amp;").replace("\"",
-						// "&quot;").replace("<", "&lt;").replace(">", "&gt;");
 	}
 
 	private String escapeTextValue(String value) {
 		if (value != null) {
-			return value;// .replace("&", "&amp;").replace("<",
-							// "&lt;").replace(">", "&gt;");
+			return value;
 		}
 		return "";
 	}
@@ -289,7 +280,6 @@ public class ScriptedSink extends AbstractTokenVisitor {
 	@Override
 	public void start() {
 		sb = new StringBuilder();
-
 	}
 
 	@Override

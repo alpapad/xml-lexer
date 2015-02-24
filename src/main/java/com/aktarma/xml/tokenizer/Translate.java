@@ -13,14 +13,14 @@ public class Translate {
 
 	public static void main(String[] args) throws IOException, URISyntaxException {
 
-		File dir = new File("C:/WORK/projects/reach/reach");
+		File dir = new File("/home/alpapad/rit/webapp/");
 		Collection<File> files = FileUtils.listFiles(
 				  dir, 
 				  new RegexFileFilter(".*\\.jsp$"), 
 				  DirectoryFileFilter.DIRECTORY
 				);
 		for(File f: files) {
-			String parsed = Utils.parseReplaceFile(f);
+			String parsed = Utils.parseReplaceFile(f,"other");
 			
 			Utils.diff(f.getAbsolutePath(), parsed);
 		}	

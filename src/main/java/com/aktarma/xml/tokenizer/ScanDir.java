@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 
+import com.aktarma.xml.tokenizer.process.JsfTagsCollector;
 import com.aktarma.xml.tokenizer.process.JsfTagsCollector.JsfTags;
 
 public class ScanDir {
@@ -27,7 +28,7 @@ public class ScanDir {
 			
 			Utils.diff(f.getAbsolutePath(), parsed);
 		}
-		for(JsfTags t:Utils.jsft.getTags()){
+		for(JsfTags t:JsfTagsCollector.getTags()){
 			URI u = new URI(t.getUri());
 			if(!("java.sun.com".equalsIgnoreCase(u.getHost())  || "www.echa.eu".equalsIgnoreCase(u.getHost()) || null == u.getHost() )) {
 				System.err.println(u.getHost() + " " + u.getPath()  + " --> " + t.getTag() + " (" + t.getCount() + " times):" + t.getAttrs());
