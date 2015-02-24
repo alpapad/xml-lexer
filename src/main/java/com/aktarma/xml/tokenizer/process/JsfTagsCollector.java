@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.aktarma.xml.tokenizer.tokens.ElementTagPart;
-import com.aktarma.xml.tokenizer.tokens.TokenType;
 import com.aktarma.xml.tokenizer.tokens.elements.NsTagStartToken;
 import com.aktarma.xml.tokenizer.tokens.elements.TaglibToken;
 import com.aktarma.xml.tokenizer.tokens.parts.ElAttritbutePart;
@@ -112,8 +111,7 @@ public class JsfTagsCollector extends AbstractTokenVisitor {
 
 	@Override
 	public boolean visit(NsTagStartToken token) {
-		token.getNs();
-		token.getTagName();
+
 		JsfTags tag;
 		String ns = token.getNs().trim().toLowerCase();
 

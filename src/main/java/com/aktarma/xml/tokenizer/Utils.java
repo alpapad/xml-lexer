@@ -14,6 +14,7 @@ import com.aktarma.xml.tokenizer.process.JspTaglibsCollector;
 import com.aktarma.xml.tokenizer.process.StringSink;
 import com.aktarma.xml.tokenizer.process.TokenChainSink;
 import com.aktarma.xml.tokenizer.process.TokenCollectorSink;
+import com.aktarma.xml.tokenizer.scripting.ScriptedSink;
 import com.aktarma.xml.tokenizer.tokens.TokenPart;
 import com.aktarma.xml.tokenizer.tokens.TokenType;
 
@@ -53,7 +54,7 @@ public class Utils {
     
     public static String parseFile(File f) throws IOException{
 		//System.err.println(f.getAbsolutePath());
-		StringSink s = new StringSink();
+    	StringSink s = new StringSink();
 		TokenCollectorSink collector = new TokenCollectorSink();
 		
 		JspTaglibsCollector taglibs = new JspTaglibsCollector();
@@ -64,18 +65,21 @@ public class Utils {
 		sink.addVisitor(jsft);
 
 		MixedHtmlParser.processFile(f.getAbsolutePath(), sink);
-		//LexLuthor.processFile("C:/WORK/projects/xml-lexer/aa.jsp", sink);
 
-		System.err.println(f.getAbsolutePath() + " ---> " + taglibs);
 		
 		for (TokenPart token : collector.getCollected()) {
 			TokenType.visitType(s, token);
 		}
-
-		//System.err.println(s.text());
+		
 		return s.text();
 	}
 	
+    public static String parseReplaceFile(File f) throws IOException{
+    	ScriptedSink s = new ScriptedSink();
+		MixedHtmlParser.processFile(f.getAbsolutePath(), s);
+		return s.text();
+	}
+    
 	public static void diff(String file, String parsed){
 		  List<String> original = fileToLines(file);
 	        List<String> revised  = stringToLines(parsed);

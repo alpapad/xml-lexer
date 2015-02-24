@@ -22,7 +22,7 @@ public class ElAttritbutePart extends AbstractElementPart {
         this.operator = operator;
         this.value = value;//unescape(value);
         
-        this.key = name;//.trim().toLowerCase();
+        this.key = name.trim().toLowerCase();
     }
 
     public void setValue(String value) {
@@ -33,6 +33,13 @@ public class ElAttritbutePart extends AbstractElementPart {
         return name;
     }
 
+    public String getSimpleName(){
+    	if(name != null) {
+    		return name.trim();
+    	}
+    	return "";
+    } 
+    
     public String getValue() {
         return value;
     }

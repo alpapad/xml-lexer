@@ -8,6 +8,7 @@ import com.aktarma.xml.tokenizer.tokens.AbstractTokenPart;
 import com.aktarma.xml.tokenizer.tokens.ElementPart;
 import com.aktarma.xml.tokenizer.tokens.ElementTagPart;
 import com.aktarma.xml.tokenizer.tokens.TokenType;
+import com.aktarma.xml.tokenizer.tokens.parts.ElAttritbutePart;
 
 public abstract class AbstractElementToken extends AbstractTokenPart implements ElementPart {
 
@@ -99,6 +100,7 @@ public abstract class AbstractElementToken extends AbstractTokenPart implements 
         parts.add(element);
     }
 
+    
     /* (non-Javadoc)
 	 * @see com.aktarma.xml.tokenizer.tokens.ElementPart#getParts()
 	 */
@@ -107,6 +109,26 @@ public abstract class AbstractElementToken extends AbstractTokenPart implements 
         return parts;
     }
 
+    public List<ElAttritbutePart> getAttributes(){
+    	List<ElAttritbutePart> attrs = new ArrayList<>();
+    	if(parts != null) {
+    		for(ElementTagPart p : parts) {
+    			if(p instanceof ElAttritbutePart) {
+    				attrs.add((ElAttritbutePart)p);
+    			}
+    		}
+    	}
+    	return attrs;
+    }
+    
+    public ElAttritbutePart getAttribute(String attr){
+    	ElementTagPart p =indexedParts.get(attr);
+    	if(p instanceof ElAttritbutePart) {
+			return (ElAttritbutePart)p;
+		}
+    	return null;
+    }
+    
     /* (non-Javadoc)
 	 * @see com.aktarma.xml.tokenizer.tokens.ElementPart#getOpen()
 	 */
