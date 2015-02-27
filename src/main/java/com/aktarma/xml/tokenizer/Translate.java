@@ -23,7 +23,7 @@ public class Translate {
 				  DirectoryFileFilter.DIRECTORY
 				);
 		for(File f: files) {
-			String parsed = Utils.parseReplaceFile(f,"other");
+			String parsed = Utils.parseReplaceFile(f,"src/groovy");
 			String finalPath = f.getAbsolutePath().replaceAll("jsp$", "xhtml");
 			try(FileOutputStream fos = new FileOutputStream(new File(finalPath))){
 				IOUtils.write(parsed, fos);
