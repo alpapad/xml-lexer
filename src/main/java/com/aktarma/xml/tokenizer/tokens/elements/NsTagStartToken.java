@@ -1,10 +1,14 @@
 package com.aktarma.xml.tokenizer.tokens.elements;
 
-import com.aktarma.xml.tokenizer.tokens.NsElementPart;
+import com.aktarma.xml.tokenizer.tokens.INsElement;
 import com.aktarma.xml.tokenizer.tokens.TokenType;
 
-public class NsTagStartToken extends AbstractElementToken implements NsElementPart{
+public class NsTagStartToken extends AbstractElementToken implements INsElement{
 	private String ns;
+	
+	private INsElement sibling;
+	
+	private INsElement parent;
 	
     public NsTagStartToken(int line, int charpos, String tagName) {
         super(line, charpos, TokenType.NS_TAG_START);
@@ -23,5 +27,29 @@ public class NsTagStartToken extends AbstractElementToken implements NsElementPa
 	public void setNs(String ns) {
 		this.ns = ns;
 	}
+
+	@Override
+	public boolean isStart() {
+		return true;
+	}
+
+	@Override
+	public void setSibling(INsElement el) {
+		this.sibling = el;
+	}
+
+	public INsElement getSibling() {
+		return sibling;
+	}
     
+
+	@Override
+	public void setParent(INsElement parent) {
+		this.parent = parent;
+	}
+
+	@Override
+	public INsElement getParent() {
+		return parent;
+	}
 }

@@ -12,7 +12,7 @@ public class MiniTest {
 		// TODO Auto-generated method stub
 		StringSink s = new StringSink();
 		StringSink.debug = true;
-		ScriptAndStylesParser.processFile("/home/alpapad/rit/xml-lexer/aa.html", s);
+		ScriptAndStylesParser.processFile("aa.html", s);
 		System.err.println(s.text());
 	}
 }

@@ -10,14 +10,14 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 
-import com.aktarma.xml.tokenizer.process.JsfTagsCollector;
-import com.aktarma.xml.tokenizer.process.JsfTagsCollector.JsfTags;
+import com.aktarma.xml.tokenizer.scripting.JsfTag;
+import com.aktarma.xml.tokenizer.scripting.JsfTagsCollector;
 
 public class ScanDir {
 
 	public static void main(String[] args) throws IOException, URISyntaxException {
 
-		File dir = new File("C:/WORK/projects/reach/reach");
+		File dir = new File(CFG.getContentDir());
 		Collection<File> files = FileUtils.listFiles(
 				  dir, 
 				  new RegexFileFilter(".*\\.jsp$"), 
@@ -28,9 +28,9 @@ public class ScanDir {
 			
 			Utils.diff(f.getAbsolutePath(), parsed);
 		}
-		for(JsfTags t:JsfTagsCollector.getTags()){
+		for(JsfTag t:JsfTagsCollector.getTags()){
 			URI u = new URI(t.getUri());
-			if(!("java.sun.com".equalsIgnoreCase(u.getHost())  || "www.echa.eu".equalsIgnoreCase(u.getHost()) || null == u.getHost() )) {
+			if (u.getHost() == null || !CFG.getSkipNs().contains(u.getHost())) {
 				System.err.println(u.getHost() + " " + u.getPath()  + " --> " + t.getTag() + " (" + t.getCount() + " times):" + t.getAttrs());
 			}
 		}

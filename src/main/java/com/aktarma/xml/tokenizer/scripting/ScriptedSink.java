@@ -1,10 +1,13 @@
 package com.aktarma.xml.tokenizer.scripting;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.aktarma.xml.tokenizer.process.AbstractTokenVisitor;
-import com.aktarma.xml.tokenizer.tokens.NsElementPart;
+import com.aktarma.xml.tokenizer.tokens.ElementTagPart;
+import com.aktarma.xml.tokenizer.tokens.INsElement;
 import com.aktarma.xml.tokenizer.tokens.TokenPart;
 import com.aktarma.xml.tokenizer.tokens.elements.AbstractElementToken;
 import com.aktarma.xml.tokenizer.tokens.elements.CssEndToken;
@@ -38,16 +41,24 @@ public class ScriptedSink extends AbstractTokenVisitor {
 
 	public static Map<String, JsfTagLibg> tagLibs = new HashMap<>();
 
+	private final List<INsElement> elementStack = new ArrayList<>();
+
 	private final String basePath;
 
-	public ScriptedSink(String basePath) {
+	private final boolean validateOnly;
+	private final String fileName;
+	
+	public ScriptedSink(boolean validate, String basePath, String fileName) {
 		this.basePath = basePath;
+		this.validateOnly = validate;
+		this.fileName = fileName;
 	}
 
 	public String text() {
 		return sb.toString();
 	}
 
+	
 	@Override
 	public boolean visit(CommentToken token) {
 		if (debug) {
@@ -71,7 +82,7 @@ public class ScriptedSink extends AbstractTokenVisitor {
 		if (debug) {
 			sb.append("<!-- InlineTextToken -->");
 		}
-		sb.append(escapeTextValue(token.getContent()));
+		sb.append(token.getContent());
 		return true;
 
 	}
@@ -97,14 +108,28 @@ public class ScriptedSink extends AbstractTokenVisitor {
 
 	@Override
 	public boolean visit(NsTagStartToken token) {
-		sb.append(get(token.getNs(), token.getTagName()).start(token));
-		return true;
+		//ALLWAYS get the visitor!
+		final NsTagVisitor visitor = getNsTagVisitor(token, token.getNs(), token.getTagName());
+		
+		if (!validateOnly) {
+			sb.append(visitor.start(token));
+			return true;
+		} else {
+			return visitElementToken(token);
+		}
 	}
 
 	@Override
 	public boolean visit(NsTagEndToken token) {
-		sb.append(get(token.getNs(), token.getTagName()).end(token));
-		return true;
+		//ALLWAYS get the visitor!
+		final NsTagVisitor visitor = getNsTagVisitor(token, token.getNs(), token.getTagName());
+		
+		if (!validateOnly) {
+			sb.append(visitor.end(token));
+			return true;
+		} else {
+			return visitElementToken(token);
+		}
 	}
 
 	@Override
@@ -133,46 +158,12 @@ public class ScriptedSink extends AbstractTokenVisitor {
 		String uri = fixUri(taglib.getUri());
 
 		if (!tagLibs.containsKey(prefix)) {
-			JsfTagLibg tgLib = new JsfTagLibg(basePath,prefix, uri);
+			JsfTagLibg tgLib = new JsfTagLibg(basePath, prefix, uri);
 			tagLibs.put(prefix, tgLib);
 		}
 		return visitElementToken(taglib);
 	}
 
-	private NsTagVisitor get(String prefix, String tag) {
-		prefix = fixNs(prefix);
-		tag = fixUri(tag);
-
-		if (!tagLibs.containsKey(prefix)) {
-
-			JsfTagLibg tgLib = new JsfTagLibg(basePath, prefix, "");
-			tagLibs.put(prefix, tgLib);
-			return tgLib.tag(tag);
-		} else {
-			return tagLibs.get(prefix).tag(tag);
-		}
-	}
-
-
-
-	private static String fixNs(String ns) {
-		if (ns == null) {
-			ns = "";
-		} else {
-			ns = ns.trim().toLowerCase().replace("\"", "").replace("'", "");
-		}
-		return ns;
-	}
-
-	private static String fixUri(String ur) {
-		String uri = "";
-		if (ur == null) {
-			uri = "";
-		} else {
-			uri = ur.replace("\"", "").replace("'", "");
-		}
-		return uri;
-	}
 
 	@Override
 	public boolean visit(JSPIncludeToken token) {
@@ -184,7 +175,7 @@ public class ScriptedSink extends AbstractTokenVisitor {
 		if (debug) {
 			sb.append("<!-- InlineCodeToken -->");
 		}
-		sb.append(escapeTextValue(token.getContent()));
+		sb.append(token.getContent());
 		return true;
 	}
 
@@ -241,7 +232,7 @@ public class ScriptedSink extends AbstractTokenVisitor {
 		if (token.getName() != null) {
 			renderAttribute(sb, token.getName(), token.getOperator(), token.getValue());
 		}
-		return true;// visit((TokenPart) token);
+		return true;
 	}
 
 	@Override
@@ -262,7 +253,8 @@ public class ScriptedSink extends AbstractTokenVisitor {
 		return false;
 	}
 
-	private static void renderAttribute(StringBuilder buffer, String qname, String eq, String value) {
+	private static void renderAttribute(StringBuilder buffer, String qname,
+			String eq, String value) {
 		if (value == null || value.trim().length() == 0) {
 			buffer.append(qname);
 		} else {
@@ -270,13 +262,37 @@ public class ScriptedSink extends AbstractTokenVisitor {
 		}
 	}
 
-	private String escapeTextValue(String value) {
-		if (value != null) {
-			return value;
-		}
-		return "";
+
+
+	
+	public void push(INsElement element) {
+		elementStack.add(0, element);
 	}
 
+	public INsElement peek() {
+		if (elementStack.size() != 0) {
+			return elementStack.get(0);
+		} else {
+			return null;
+		}
+	}
+
+	public INsElement pop() {
+		if (elementStack.size() != 0) {
+			return elementStack.remove(0);
+		} else {
+			return null;
+		}
+	}
+
+	public int size() {
+		return elementStack.size();
+	}
+
+	public List<INsElement> getElementStack() {
+		return elementStack;
+	}
+	
 	@Override
 	public void start() {
 		sb = new StringBuilder();
@@ -284,18 +300,98 @@ public class ScriptedSink extends AbstractTokenVisitor {
 
 	@Override
 	public void finish() {
+		for (JsfTagLibg tglib : tagLibs.values()) {
+			if (!tglib.finish()) {
+				System.err.println(fileName + ", Error finishing taglib:" + tglib);
+				for(String error: tglib.getErrors()) {
+					System.err.println(fileName + ", " +error);
+				}
+			}
+		}
+		if(!validateOnly){
+			tagLibs.clear();
+		}
 	}
 
 	@Override
 	public void abort() {
+		for (JsfTagLibg tglib : tagLibs.values()) {
+			if (!tglib.abort()) {
+				System.err.println("Error aborting taglib:" + tglib);
+			}
+		}
+		if(!validateOnly){
+			tagLibs.clear();
+		}
 	}
 
+
+	private NsTagVisitor getNsTagVisitor(INsElement token, String prefix, String tag) {
+		prefix = fixNs(prefix);
+		tag = fixUri(tag);
+		JsfTagLibg tgLib;
+		
+		if (!tagLibs.containsKey(prefix)) {
+			tgLib = new JsfTagLibg(basePath, prefix, "");
+			tgLib.setValidateOnly(validateOnly);
+			tagLibs.put(prefix, tgLib);
+		} else {
+			tgLib = tagLibs.get(prefix);
+		}
+		
+		if (token.getParts() != null) {
+			for (ElementTagPart p : token.getParts()) {
+				if (p instanceof ElAttritbutePart) {
+					ElAttritbutePart at = (ElAttritbutePart) p;
+					tgLib.addAttribute(at.getName().trim());
+				}
+			}
+		}
+		if(token.isStart()) {
+			INsElement tkn = peek();
+			if(!token.isSelfClose()) {
+				push(token);
+			}
+			if(tkn != null) {
+				token.setParent(tkn);
+			}
+			
+		} else {
+			INsElement tkn = peek();
+			assert(tkn != null);
+			assert(tkn.isStart());
+			assert(tkn.getTagName().equals(token.getTagName()));
+			tkn = pop();
+			token.setParent(tkn.getParent());
+		}
+		return tgLib.tag(token, tag);
+	}
+
+	private static String fixNs(String ns) {
+		if (ns == null) {
+			ns = "";
+		} else {
+			ns = ns.trim().toLowerCase().replace("\"", "").replace("'", "");
+		}
+		return ns;
+	}
+
+	private static String fixUri(String ur) {
+		String uri = "";
+		if (ur == null) {
+			uri = "";
+		} else {
+			uri = ur.replace("\"", "").replace("'", "");
+		}
+		return uri;
+	}
+	
 	private boolean visitElementToken(AbstractElementToken token) {
 		if (debug) {
 			sb.append("<!--" + token.type() + "-->");
 		}
-		if (token instanceof NsElementPart) {
-			NsElementPart nsel = (NsElementPart) token;
+		if (token instanceof INsElement) {
+			INsElement nsel = (INsElement) token;
 
 			sb.append(nsel.getOpen())//
 					.append(nsel.getNs()) //

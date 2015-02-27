@@ -1,8 +1,11 @@
 package com.aktarma.xml.tokenizer.scripting;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import com.aktarma.xml.tokenizer.tokens.INsElement;
 
 public class JsfTag {
 	private final String uri;
@@ -12,8 +15,11 @@ public class JsfTag {
 
 	private final Set<String> attrs = new HashSet<>();
 
+	// stack of elements seen so far
+	private final List<INsElement> elementStack = new ArrayList<>();
+
 	private final NsTagVisitor visitor;
-	
+
 	public JsfTag(String uri, String tag, NsTagVisitor visitor) {
 		this.uri = uri;
 		this.tag = tag;
@@ -50,6 +56,34 @@ public class JsfTag {
 
 	public NsTagVisitor getVisitor() {
 		return visitor;
+	}
+
+	public void push(INsElement element) {
+		elementStack.add(0, element);
+	}
+
+	public INsElement peek() {
+		if (elementStack.size() != 0) {
+			return elementStack.get(0);
+		} else {
+			return null;
+		}
+	}
+
+	public INsElement pop() {
+		if (elementStack.size() != 0) {
+			return elementStack.remove(0);
+		} else {
+			return null;
+		}
+	}
+
+	public int size() {
+		return elementStack.size();
+	}
+
+	public List<INsElement> getElementStack() {
+		return elementStack;
 	}
 
 	@Override

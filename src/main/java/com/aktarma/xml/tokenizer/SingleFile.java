@@ -9,7 +9,7 @@ public class SingleFile {
 
 	public static void main(String[] args) throws IOException {
 		StringSink.debug = true;
-		File f = new File("/home/alpapad/rit/xml-lexer/aa.jsp");
+		File f = new File("aa.jsp");
 		
 		String parsed = Utils.parseFile(f);
 		

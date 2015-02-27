@@ -14,11 +14,10 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.aktarma.xml.tokenizer.parser.MixedHtmlParser;
-import com.aktarma.xml.tokenizer.process.JsfTagsCollector;
-import com.aktarma.xml.tokenizer.process.JspTaglibsCollector;
 import com.aktarma.xml.tokenizer.process.StringSink;
 import com.aktarma.xml.tokenizer.process.TokenChainSink;
 import com.aktarma.xml.tokenizer.process.TokenCollectorSink;
+import com.aktarma.xml.tokenizer.scripting.JsfTagsCollector;
 import com.aktarma.xml.tokenizer.scripting.ScriptedSink;
 import com.aktarma.xml.tokenizer.tokens.TokenPart;
 import com.aktarma.xml.tokenizer.tokens.TokenType;
@@ -121,16 +120,14 @@ public class Utils {
 	public static JsfTagsCollector jsft = new JsfTagsCollector();
 
 	public static String parseFile(File f) throws IOException {
-		// System.err.println(f.getAbsolutePath());
 		StringSink s = new StringSink();
 		TokenCollectorSink collector = new TokenCollectorSink();
 
-		JspTaglibsCollector taglibs = new JspTaglibsCollector();
 
 		TokenChainSink sink = new TokenChainSink();
 		sink.addVisitor(collector);
-		sink.addVisitor(taglibs);
 		sink.addVisitor(jsft);
+		//sink.addVisitor(new ScriptedSink(true, "other"));
 
 		MixedHtmlParser.processFile(f.getAbsolutePath(), sink);
 
@@ -142,7 +139,13 @@ public class Utils {
 	}
 
 	public static String parseReplaceFile(File f, String basePath) throws IOException {
-		ScriptedSink s = new ScriptedSink(basePath);
+		ScriptedSink s = new ScriptedSink(false, basePath, f.getAbsolutePath());
+		MixedHtmlParser.processFile(f.getAbsolutePath(), s);
+		return s.text();
+	}
+	
+	public static String validate(File f, String basePath) throws IOException {
+		ScriptedSink s = new ScriptedSink(true,basePath, f.getAbsolutePath());
 		MixedHtmlParser.processFile(f.getAbsolutePath(), s);
 		return s.text();
 	}

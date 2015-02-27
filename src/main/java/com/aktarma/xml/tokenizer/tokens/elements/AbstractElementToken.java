@@ -7,149 +7,194 @@ import java.util.List;
 import com.aktarma.xml.tokenizer.tokens.AbstractTokenPart;
 import com.aktarma.xml.tokenizer.tokens.ElementPart;
 import com.aktarma.xml.tokenizer.tokens.ElementTagPart;
+import com.aktarma.xml.tokenizer.tokens.IElement;
 import com.aktarma.xml.tokenizer.tokens.TokenType;
 import com.aktarma.xml.tokenizer.tokens.parts.ElAttritbutePart;
 
-public abstract class AbstractElementToken extends AbstractTokenPart implements ElementPart {
+public abstract class AbstractElementToken extends AbstractTokenPart implements
+		ElementPart, IElement {
 
-    protected final static String TAG_OPEN = "<".intern();
-    protected final static String ETAG_OPEN = "</".intern();
-    protected final static String TAG_CLOSE = ">".intern();
-    protected final static String TAG_SLEF_CLOSE = "/>".intern();
+	protected final static String TAG_OPEN = "<".intern();
+	protected final static String ETAG_OPEN = "</".intern();
+	protected final static String TAG_CLOSE = ">".intern();
+	protected final static String TAG_SLEF_CLOSE = "/>".intern();
 
-    protected String tagName = "";
+	protected String tagName = "";
 
-    protected String open = "";
+	protected String open = "";
 
-    protected String close = "";
+	protected String close = "";
 
-    protected boolean selfClose = false;
+	protected boolean selfClose = false;
 
-    private List<ElementTagPart> parts = null;
+	private List<ElementTagPart> parts = null;
 
-    private LinkedHashMap<String, ElementTagPart> indexedParts = null;
+	private LinkedHashMap<String, ElementTagPart> indexedParts = null;
 
-    public AbstractElementToken(int line, int charpos, TokenType type) {
-        super(line, charpos, type);
-    }
+	public AbstractElementToken(int line, int charpos, TokenType type) {
+		super(line, charpos, type);
+	}
 
-    /* (non-Javadoc)
-	 * @see com.aktarma.xml.tokenizer.tokens.ElementPart#isSelfClose()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.aktarma.xml.tokenizer.tokens.elements.IElement#isSelfClose()
 	 */
-    @Override
+	@Override
 	public boolean isSelfClose() {
-        return selfClose;
-    }
+		return selfClose;
+	}
 
-    /* (non-Javadoc)
-	 * @see com.aktarma.xml.tokenizer.tokens.ElementPart#setSelfClose(boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.aktarma.xml.tokenizer.tokens.elements.IElement#setSelfClose(boolean)
 	 */
-    @Override
+	@Override
 	public void setSelfClose(boolean selfClose) {
-        this.selfClose = selfClose;
-    }
+		this.selfClose = selfClose;
+	}
 
-    /* (non-Javadoc)
-	 * @see com.aktarma.xml.tokenizer.tokens.ElementPart#getTagName()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.aktarma.xml.tokenizer.tokens.elements.IElement#getTagName()
 	 */
-    @Override
+	@Override
 	public String getTagName() {
-        return tagName;
-    }
+		return tagName;
+	}
 
-    /* (non-Javadoc)
-	 * @see com.aktarma.xml.tokenizer.tokens.ElementPart#setOpen(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.aktarma.xml.tokenizer.tokens.elements.IElement#setOpen(java.lang.
+	 * String)
 	 */
-    @Override
+	@Override
 	public void setOpen(String open) {
-        this.open = open;
-    }
+		this.open = open;
+	}
 
-    /* (non-Javadoc)
-	 * @see com.aktarma.xml.tokenizer.tokens.ElementPart#setClose(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.aktarma.xml.tokenizer.tokens.elements.IElement#setClose(java.lang
+	 * .String)
 	 */
-    @Override
+	@Override
 	public void setClose(String close) {
-        this.close = close;
-    }
+		this.close = close;
+	}
 
-    /* (non-Javadoc)
-	 * @see com.aktarma.xml.tokenizer.tokens.ElementPart#addPart(com.aktarma.xml.tokenizer.tokens.ElementTagPart)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.aktarma.xml.tokenizer.tokens.elements.IElement#addPart(com.aktarma
+	 * .xml.tokenizer.tokens.ElementTagPart)
 	 */
-    @Override
+	@Override
 	public void addPart(ElementTagPart element) {
-        if (parts == null) {
-            parts = new ArrayList<ElementTagPart>();
-        }
-        element.setParent(this);
-        // is indexed?
-        if (element.getKey() != null) {
-            if(indexedParts == null) {
-                indexedParts = new LinkedHashMap<String, ElementTagPart>();
-            }
-            // existed?
-            if (indexedParts.containsKey(element.getKey())) {
-                // remove!
-                ElementTagPart other = indexedParts.get(element.getKey());
-                if (other != null) {
-                    parts.remove(other);
-                }
-            }
-            indexedParts.put(element.getKey(), element);
-        }
-        parts.add(element);
-    }
-
-    
-    /* (non-Javadoc)
-	 * @see com.aktarma.xml.tokenizer.tokens.ElementPart#getParts()
-	 */
-    @Override
-	public List<ElementTagPart> getParts() {
-        return parts;
-    }
-
-    public List<ElAttritbutePart> getAttributes(){
-    	List<ElAttritbutePart> attrs = new ArrayList<>();
-    	if(parts != null) {
-    		for(ElementTagPart p : parts) {
-    			if(p instanceof ElAttritbutePart) {
-    				attrs.add((ElAttritbutePart)p);
-    			}
-    		}
-    	}
-    	return attrs;
-    }
-    
-    public ElAttritbutePart getAttribute(String attr){
-    	ElementTagPart p =indexedParts.get(attr);
-    	if(p instanceof ElAttritbutePart) {
-			return (ElAttritbutePart)p;
+		if (parts == null) {
+			parts = new ArrayList<ElementTagPart>();
 		}
-    	return null;
-    }
-    
-    /* (non-Javadoc)
-	 * @see com.aktarma.xml.tokenizer.tokens.ElementPart#getOpen()
-	 */
-    @Override
-	public String getOpen() {
-        return open;
-    }
+		element.setParent(this);
+		// is indexed?
+		if (element.getKey() != null) {
+			if (indexedParts == null) {
+				indexedParts = new LinkedHashMap<String, ElementTagPart>();
+			}
+			// existed?
+			if (indexedParts.containsKey(element.getKey())) {
+				// remove!
+				ElementTagPart other = indexedParts.get(element.getKey());
+				if (other != null) {
+					parts.remove(other);
+				}
+			}
+			indexedParts.put(element.getKey(), element);
+		}
+		parts.add(element);
+	}
 
-    /* (non-Javadoc)
-	 * @see com.aktarma.xml.tokenizer.tokens.ElementPart#getClose()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.aktarma.xml.tokenizer.tokens.elements.IElement#getParts()
 	 */
-    @Override
+	@Override
+	public List<ElementTagPart> getParts() {
+		return parts;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.aktarma.xml.tokenizer.tokens.elements.IElement#getAttributes()
+	 */
+	@Override
+	public List<ElAttritbutePart> getAttributes() {
+		List<ElAttritbutePart> attrs = new ArrayList<>();
+		if (parts != null) {
+			for (ElementTagPart p : parts) {
+				if (p instanceof ElAttritbutePart) {
+					attrs.add((ElAttritbutePart) p);
+				}
+			}
+		}
+		return attrs;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.aktarma.xml.tokenizer.tokens.elements.IElement#getAttribute(java.
+	 * lang.String)
+	 */
+	@Override
+	public ElAttritbutePart getAttribute(String attr) {
+		if(attr == null || indexedParts == null) {
+			return null;
+		}
+		
+		ElementTagPart p = indexedParts.get(attr.trim().toLowerCase());
+		if (p instanceof ElAttritbutePart) {
+			return (ElAttritbutePart) p;
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.aktarma.xml.tokenizer.tokens.elements.IElement#getOpen()
+	 */
+	@Override
+	public String getOpen() {
+		return open;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.aktarma.xml.tokenizer.tokens.elements.IElement#getClose()
+	 */
+	@Override
 	public String getClose() {
-        return close;
-    }
+		return close;
+	}
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + " [tagName=" + tagName + ", open=" + open
-				+ ", close=" + close + ", selfClose=" + selfClose + ", parts="
-				+ parts + ", indexedParts=" + indexedParts + "]";
+		return this.getClass().getSimpleName() + " [tagName=" + tagName
+				+ ", open=" + open + ", close=" + close + ", selfClose="
+				+ selfClose + ", parts=" + parts + ", indexedParts="
+				+ indexedParts + "]";
 	}
 
 }

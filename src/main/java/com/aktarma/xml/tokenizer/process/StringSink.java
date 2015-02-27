@@ -1,6 +1,6 @@
 package com.aktarma.xml.tokenizer.process;
 
-import com.aktarma.xml.tokenizer.tokens.NsElementPart;
+import com.aktarma.xml.tokenizer.tokens.INsElement;
 import com.aktarma.xml.tokenizer.tokens.TokenPart;
 import com.aktarma.xml.tokenizer.tokens.elements.AbstractElementToken;
 import com.aktarma.xml.tokenizer.tokens.elements.NsTagEndToken;
@@ -248,8 +248,8 @@ public class StringSink extends AbstractTokenVisitor {
 		if (debug) {
 			sb.append("<!--" + token.type() + "-->");
 		}
-		if (token instanceof NsElementPart) {
-			NsElementPart nsel = (NsElementPart) token;
+		if (token instanceof INsElement) {
+			INsElement nsel = (INsElement) token;
 			
 			sb.append(nsel.getOpen())//
 					.append(nsel.getNs()) //
