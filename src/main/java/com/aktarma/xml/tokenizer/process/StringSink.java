@@ -1,8 +1,8 @@
 package com.aktarma.xml.tokenizer.process;
 
 import com.aktarma.xml.tokenizer.tokens.INsElement;
-import com.aktarma.xml.tokenizer.tokens.TokenPart;
-import com.aktarma.xml.tokenizer.tokens.elements.AbstractElementToken;
+import com.aktarma.xml.tokenizer.tokens.IToken;
+import com.aktarma.xml.tokenizer.tokens.elements.AbstractElement;
 import com.aktarma.xml.tokenizer.tokens.elements.NsTagEndToken;
 import com.aktarma.xml.tokenizer.tokens.elements.NsTagStartToken;
 import com.aktarma.xml.tokenizer.tokens.elements.TagEndToken;
@@ -244,7 +244,7 @@ public class StringSink extends AbstractTokenVisitor {
 	public void abort() {
 	}
 
-	private boolean visitElementToken(AbstractElementToken token) {
+	private boolean visitElementToken(AbstractElement token) {
 		if (debug) {
 			sb.append("<!--" + token.type() + "-->");
 		}
@@ -263,9 +263,9 @@ public class StringSink extends AbstractTokenVisitor {
 		return true;
 	}
 
-	private void appendAttributes(AbstractElementToken token) {
+	private void appendAttributes(AbstractElement token) {
 		if (token.getParts() != null) {
-			for (TokenPart p : token.getParts()) {
+			for (IToken p : token.getParts()) {
 				switch (p.type()) {
 				case ATTRVAL:
 				case TAG_WS:

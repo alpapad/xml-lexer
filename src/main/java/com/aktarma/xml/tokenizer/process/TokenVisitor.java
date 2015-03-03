@@ -1,6 +1,6 @@
 package com.aktarma.xml.tokenizer.process;
 
-import com.aktarma.xml.tokenizer.tokens.TokenPart;
+import com.aktarma.xml.tokenizer.tokens.IToken;
 import com.aktarma.xml.tokenizer.tokens.elements.NsTagEndToken;
 import com.aktarma.xml.tokenizer.tokens.elements.NsTagStartToken;
 import com.aktarma.xml.tokenizer.tokens.elements.TagEndToken;
@@ -110,5 +110,5 @@ public interface TokenVisitor {
 	 * @param current
 	 * @return
 	 */
-	boolean visitToken(TokenPart current);
+	boolean visitToken(IToken current);
 }

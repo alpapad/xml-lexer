@@ -1,6 +1,6 @@
 package com.aktarma.xml.tokenizer.process;
 
-import com.aktarma.xml.tokenizer.tokens.TokenPart;
+import com.aktarma.xml.tokenizer.tokens.IToken;
 import com.aktarma.xml.tokenizer.tokens.TokenType;
 import com.aktarma.xml.tokenizer.tokens.elements.NsTagEndToken;
 import com.aktarma.xml.tokenizer.tokens.elements.NsTagStartToken;
@@ -158,12 +158,12 @@ public abstract class AbstractTokenVisitor implements TokenVisitor {
 		return dispatch(token);
 	}
 	
-	protected boolean dispatch(TokenPart token){
+	protected boolean dispatch(IToken token){
 		return true;
 	}
 	
 	@Override
-	public boolean visitToken(TokenPart token) {
+	public boolean visitToken(IToken token) {
 		if(token == null) {
 			return true;
 		}

@@ -50,7 +50,7 @@ public enum TokenType {
     NS_TAG_START, 
     NS_TAG_END;
     
-    public static boolean visitType(TokenVisitor s, TokenPart token) {
+    public static boolean visitType(TokenVisitor s, IToken token) {
         if (token == null) {
             return false;
         }

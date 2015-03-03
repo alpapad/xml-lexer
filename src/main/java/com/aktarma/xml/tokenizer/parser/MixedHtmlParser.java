@@ -13,7 +13,7 @@ import org.antlr.v4.runtime.Vocabulary;
 import com.aktarma.xml.tokenizer.lexer.FlexiXMLTokenizer;
 import com.aktarma.xml.tokenizer.lexer.Log4XANTLRErrorListener;
 import com.aktarma.xml.tokenizer.process.TokenVisitor;
-import com.aktarma.xml.tokenizer.tokens.elements.AbstractElementToken;
+import com.aktarma.xml.tokenizer.tokens.elements.AbstractElement;
 import com.aktarma.xml.tokenizer.tokens.elements.NsTagEndToken;
 import com.aktarma.xml.tokenizer.tokens.elements.NsTagStartToken;
 import com.aktarma.xml.tokenizer.tokens.elements.TagEndToken;
@@ -56,7 +56,7 @@ public class MixedHtmlParser {
 
 		final CommonTokenStream tokens = new CommonTokenStream(lexer);
 		
-		AbstractElementToken current = null;
+		AbstractElement current = null;
 
 		tokens.fill();
 
@@ -229,7 +229,6 @@ public class MixedHtmlParser {
 				throw t;
 			}
 		}
-
 		sink.finish();
 	}
 }

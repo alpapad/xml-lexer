@@ -2,16 +2,16 @@ package com.aktarma.xml.tokenizer.tokens.parts;
 
 import java.util.UUID;
 
-import com.aktarma.xml.tokenizer.tokens.AbstractTokenPart;
-import com.aktarma.xml.tokenizer.tokens.ElementPart;
-import com.aktarma.xml.tokenizer.tokens.ElementTagPart;
+import com.aktarma.xml.tokenizer.tokens.AbstractToken;
+import com.aktarma.xml.tokenizer.tokens.ITagPart;
+import com.aktarma.xml.tokenizer.tokens.IElement;
 import com.aktarma.xml.tokenizer.tokens.TokenType;
 
-public class AbstractElementPart extends AbstractTokenPart implements ElementTagPart {
+public class AbstractElementPart extends AbstractToken implements ITagPart {
 
-	protected ElementPart parent;
+	protected IElement parent;
 	
-	public AbstractElementPart(int line, int charpos, ElementPart parent, TokenType type) {
+	public AbstractElementPart(int line, int charpos, IElement parent, TokenType type) {
 		super(line, charpos, type);
 		this.parent = parent;
 	}
@@ -22,12 +22,12 @@ public class AbstractElementPart extends AbstractTokenPart implements ElementTag
 	}
 
 	@Override
-	public void setParent(ElementPart parent) {
+	public void setParent(IElement parent) {
 		this.parent = parent;
 	}
 
 	@Override
-	public ElementPart getParent() {
+	public IElement getElement() {
 		return this.parent;
 	}
 

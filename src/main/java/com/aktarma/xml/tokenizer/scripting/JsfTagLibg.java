@@ -5,10 +5,8 @@ import groovy.lang.GroovyClassLoader;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,7 +27,6 @@ public class JsfTagLibg {
 
 	private final Set<String> attrs = new LinkedHashSet<>();
 
-	private final List<String> errors = new ArrayList<>();
 
 	private boolean validateOnly = false;
 
@@ -50,9 +47,6 @@ public class JsfTagLibg {
 		this.validateOnly = validateOnly;
 	}
 
-	public Map<String, JsfTag> getTags() {
-		return tags;
-	}
 
 	public String getUri() {
 		return uri;
@@ -69,27 +63,8 @@ public class JsfTagLibg {
 			tg = tags.get(tag);
 			tg.incCount();
 		} else {
-			tg = new JsfTag(uri, tag, visitor(uri, tag));
+			tg = new JsfTag(this, tag, visitor(uri, tag));
 			tags.put(tag, tg);
-		}
-		if (token.isStart()) {
-			INsElement tkn = tg.peek();
-
-			if (!token.isSelfClose()) {
-				tg.push(token);
-			}
-			if (tkn != null) {
-				token.setParent(tkn);
-			}
-		} else {
-			INsElement tkn = tg.peek();
-			assert (tkn.isStart());
-			assert (tkn.getTagName().equals(token.getTagName()));
-
-			tkn = tg.pop();
-			tkn.setSibling(token);
-			token.setSibling(tkn);
-			token.setParent(tkn.getParent());
 		}
 		return tg.getVisitor();
 	}
@@ -131,21 +106,8 @@ public class JsfTagLibg {
 	}
 
 	public boolean finish() {
-		boolean ok = true;
-		for (JsfTag tag : tags.values()) {
-			if (tag.size() > 0) {
-				ok = false;
-				for (INsElement t : tag.getElementStack()) {
-					errors.add("Not closed element:" + t);
-				}
-			}
-		}
 		tags.clear();
-		return ok;
-	}
-
-	public List<String> getErrors() {
-		return errors;
+		return true;
 	}
 
 	public boolean abort() {

@@ -1,10 +1,10 @@
 package com.aktarma.xml.tokenizer.tokens.elements;
 
-import com.aktarma.xml.tokenizer.tokens.ElementTagPart;
+import com.aktarma.xml.tokenizer.tokens.ITagPart;
 import com.aktarma.xml.tokenizer.tokens.TokenType;
 import com.aktarma.xml.tokenizer.tokens.parts.ElAttritbutePart;
 
-public class TaglibToken extends AbstractElementToken {
+public class TaglibToken extends AbstractElement {
 	public TaglibToken(int line, int charpos, String tagName) {
 		super(line, charpos, TokenType.TAGLIB);
 		this.open = TAG_OPEN;
@@ -20,7 +20,7 @@ public class TaglibToken extends AbstractElementToken {
 	}
 	
 	private String getAttrVal(String attr) {
-		for(ElementTagPart part:this.getParts()){
+		for(ITagPart part:this.getParts()){
 			if(part instanceof ElAttritbutePart) {
 				ElAttritbutePart att = (ElAttritbutePart)part;
 				if(attr.equalsIgnoreCase(att.getName().trim())){
@@ -35,6 +35,11 @@ public class TaglibToken extends AbstractElementToken {
 	public String toString() {
 		return "TaglibToken [getUri()=" + getUri() + ", getPrefix()="
 				+ getPrefix() + "]";
+	}
+
+	@Override
+	public boolean isStart() {
+		return true;
 	}
 	
 	

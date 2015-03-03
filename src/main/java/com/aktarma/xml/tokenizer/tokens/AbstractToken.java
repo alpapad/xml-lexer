@@ -1,12 +1,12 @@
 package com.aktarma.xml.tokenizer.tokens;
 
-public abstract class AbstractTokenPart implements TokenPart {
-    
+public abstract class AbstractToken implements IToken {
+	
     protected int line;
     protected int charpos;
     protected final TokenType type;
     
-    public AbstractTokenPart(int line, int charpos,TokenType type) {
+    public AbstractToken(int line, int charpos,TokenType type) {
         this.line = line;
         this.charpos = charpos;
         this.type = type;

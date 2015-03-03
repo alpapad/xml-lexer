@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.aktarma.xml.tokenizer.process.AbstractTokenVisitor;
-import com.aktarma.xml.tokenizer.tokens.ElementTagPart;
+import com.aktarma.xml.tokenizer.tokens.ITagPart;
 import com.aktarma.xml.tokenizer.tokens.elements.NsTagStartToken;
 import com.aktarma.xml.tokenizer.tokens.elements.TaglibToken;
 import com.aktarma.xml.tokenizer.tokens.parts.ElAttritbutePart;
@@ -51,7 +51,7 @@ public class JsfTagsCollector extends AbstractTokenVisitor {
 			tags.put(ns + "/" + name, tag);
 		}
 		if (token.getParts() != null) {
-			for (ElementTagPart p : token.getParts()) {
+			for (ITagPart p : token.getParts()) {
 				if (p instanceof ElAttritbutePart) {
 					ElAttritbutePart at = (ElAttritbutePart) p;
 					tag.add(at.getName().trim());

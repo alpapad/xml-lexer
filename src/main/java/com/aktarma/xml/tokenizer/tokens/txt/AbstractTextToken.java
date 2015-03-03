@@ -1,9 +1,9 @@
 package com.aktarma.xml.tokenizer.tokens.txt;
 
-import com.aktarma.xml.tokenizer.tokens.AbstractTokenPart;
+import com.aktarma.xml.tokenizer.tokens.AbstractToken;
 import com.aktarma.xml.tokenizer.tokens.TokenType;
 
-public class AbstractTextToken extends AbstractTokenPart {
+public class AbstractTextToken extends AbstractToken {
 
     private StringBuffer content;
 

@@ -3,11 +3,11 @@ package com.aktarma.xml.tokenizer.process;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.aktarma.xml.tokenizer.tokens.TokenPart;
+import com.aktarma.xml.tokenizer.tokens.IToken;
 
 public class TokenCollectorSink extends AbstractTokenVisitor {
 
-	private List<TokenPart> collected;
+	private List<IToken> collected;
 
 	@Override
 	public void start() {
@@ -24,12 +24,12 @@ public class TokenCollectorSink extends AbstractTokenVisitor {
 	}
 	
 	
-	public List<TokenPart> getCollected() {
+	public List<IToken> getCollected() {
 		return collected;
 	}
 	
 	@Override
-	protected boolean dispatch(TokenPart token){
+	protected boolean dispatch(IToken token){
 		collected.add(token);
 		return true;
 	}

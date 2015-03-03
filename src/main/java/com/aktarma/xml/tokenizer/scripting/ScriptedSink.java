@@ -1,15 +1,13 @@
 package com.aktarma.xml.tokenizer.scripting;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.aktarma.xml.tokenizer.process.AbstractTokenVisitor;
-import com.aktarma.xml.tokenizer.tokens.ElementTagPart;
+import com.aktarma.xml.tokenizer.tokens.ITagPart;
 import com.aktarma.xml.tokenizer.tokens.INsElement;
-import com.aktarma.xml.tokenizer.tokens.TokenPart;
-import com.aktarma.xml.tokenizer.tokens.elements.AbstractElementToken;
+import com.aktarma.xml.tokenizer.tokens.IToken;
+import com.aktarma.xml.tokenizer.tokens.elements.AbstractElement;
 import com.aktarma.xml.tokenizer.tokens.elements.CssEndToken;
 import com.aktarma.xml.tokenizer.tokens.elements.CssStartToken;
 import com.aktarma.xml.tokenizer.tokens.elements.JSPIncludeToken;
@@ -41,11 +39,10 @@ public class ScriptedSink extends AbstractTokenVisitor {
 
 	public static Map<String, JsfTagLibg> tagLibs = new HashMap<>();
 
-	private final List<INsElement> elementStack = new ArrayList<>();
-
 	private final String basePath;
 
 	private final boolean validateOnly;
+	
 	private final String fileName;
 	
 	public ScriptedSink(boolean validate, String basePath, String fileName) {
@@ -261,37 +258,6 @@ public class ScriptedSink extends AbstractTokenVisitor {
 			buffer.append(qname).append(eq).append(value);
 		}
 	}
-
-
-
-	
-	public void push(INsElement element) {
-		elementStack.add(0, element);
-	}
-
-	public INsElement peek() {
-		if (elementStack.size() != 0) {
-			return elementStack.get(0);
-		} else {
-			return null;
-		}
-	}
-
-	public INsElement pop() {
-		if (elementStack.size() != 0) {
-			return elementStack.remove(0);
-		} else {
-			return null;
-		}
-	}
-
-	public int size() {
-		return elementStack.size();
-	}
-
-	public List<INsElement> getElementStack() {
-		return elementStack;
-	}
 	
 	@Override
 	public void start() {
@@ -303,9 +269,6 @@ public class ScriptedSink extends AbstractTokenVisitor {
 		for (JsfTagLibg tglib : tagLibs.values()) {
 			if (!tglib.finish()) {
 				System.err.println(fileName + ", Error finishing taglib:" + tglib);
-				for(String error: tglib.getErrors()) {
-					System.err.println(fileName + ", " +error);
-				}
 			}
 		}
 		if(!validateOnly){
@@ -340,29 +303,12 @@ public class ScriptedSink extends AbstractTokenVisitor {
 		}
 		
 		if (token.getParts() != null) {
-			for (ElementTagPart p : token.getParts()) {
+			for (ITagPart p : token.getParts()) {
 				if (p instanceof ElAttritbutePart) {
 					ElAttritbutePart at = (ElAttritbutePart) p;
 					tgLib.addAttribute(at.getName().trim());
 				}
 			}
-		}
-		if(token.isStart()) {
-			INsElement tkn = peek();
-			if(!token.isSelfClose()) {
-				push(token);
-			}
-			if(tkn != null) {
-				token.setParent(tkn);
-			}
-			
-		} else {
-			INsElement tkn = peek();
-			assert(tkn != null);
-			assert(tkn.isStart());
-			assert(tkn.getTagName().equals(token.getTagName()));
-			tkn = pop();
-			token.setParent(tkn.getParent());
 		}
 		return tgLib.tag(token, tag);
 	}
@@ -386,7 +332,7 @@ public class ScriptedSink extends AbstractTokenVisitor {
 		return uri;
 	}
 	
-	private boolean visitElementToken(AbstractElementToken token) {
+	private boolean visitElementToken(AbstractElement token) {
 		if (debug) {
 			sb.append("<!--" + token.type() + "-->");
 		}
@@ -405,9 +351,9 @@ public class ScriptedSink extends AbstractTokenVisitor {
 		return true;
 	}
 
-	private void appendAttributes(AbstractElementToken token) {
+	private void appendAttributes(AbstractElement token) {
 		if (token.getParts() != null) {
-			for (TokenPart p : token.getParts()) {
+			for (IToken p : token.getParts()) {
 				switch (p.type()) {
 				case ATTRVAL:
 				case TAG_WS:

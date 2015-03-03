@@ -1,8 +1,9 @@
 package com.aktarma.xml.tokenizer.tokens;
 
-public interface TokenPart {
+public interface IToken {
 
     int line();
+    
     int charPos();
     
     TokenType type();

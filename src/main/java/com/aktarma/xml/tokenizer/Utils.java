@@ -18,8 +18,9 @@ import com.aktarma.xml.tokenizer.process.StringSink;
 import com.aktarma.xml.tokenizer.process.TokenChainSink;
 import com.aktarma.xml.tokenizer.process.TokenCollectorSink;
 import com.aktarma.xml.tokenizer.scripting.JsfTagsCollector;
+import com.aktarma.xml.tokenizer.scripting.PreparseSink;
 import com.aktarma.xml.tokenizer.scripting.ScriptedSink;
-import com.aktarma.xml.tokenizer.tokens.TokenPart;
+import com.aktarma.xml.tokenizer.tokens.IToken;
 import com.aktarma.xml.tokenizer.tokens.TokenType;
 
 import difflib.Delta;
@@ -131,7 +132,7 @@ public class Utils {
 
 		MixedHtmlParser.processFile(f.getAbsolutePath(), sink);
 
-		for (TokenPart token : collector.getCollected()) {
+		for (IToken token : collector.getCollected()) {
 			TokenType.visitType(s, token);
 		}
 
@@ -140,13 +141,22 @@ public class Utils {
 
 	public static String parseReplaceFile(File f, String basePath) throws IOException {
 		ScriptedSink s = new ScriptedSink(false, basePath, f.getAbsolutePath());
-		MixedHtmlParser.processFile(f.getAbsolutePath(), s);
+		PreparseSink preparse = new PreparseSink();
+		
+		MixedHtmlParser.processFile(f.getAbsolutePath(), preparse);
+		for(IToken tkn : preparse.getCollected()){
+			s.visitToken(tkn);
+		}
 		return s.text();
 	}
 	
 	public static String validate(File f, String basePath) throws IOException {
 		ScriptedSink s = new ScriptedSink(true,basePath, f.getAbsolutePath());
-		MixedHtmlParser.processFile(f.getAbsolutePath(), s);
+		PreparseSink preparse = new PreparseSink();
+		MixedHtmlParser.processFile(f.getAbsolutePath(), preparse);
+		for(IToken tkn : preparse.getCollected()){
+			s.visitToken(tkn);
+		}
 		return s.text();
 	}
 

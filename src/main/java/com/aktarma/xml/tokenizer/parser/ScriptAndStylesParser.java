@@ -13,9 +13,9 @@ import com.aktarma.xml.tokenizer.lexer.FlexiMiniTokenizer;
 import com.aktarma.xml.tokenizer.lexer.Log4XANTLRErrorListener;
 import com.aktarma.xml.tokenizer.lexer.MiniTokenizer;
 import com.aktarma.xml.tokenizer.process.TokenVisitor;
-import com.aktarma.xml.tokenizer.tokens.ElementPart;
-import com.aktarma.xml.tokenizer.tokens.TokenPart;
-import com.aktarma.xml.tokenizer.tokens.elements.AbstractElementToken;
+import com.aktarma.xml.tokenizer.tokens.IElement;
+import com.aktarma.xml.tokenizer.tokens.IToken;
+import com.aktarma.xml.tokenizer.tokens.elements.AbstractElement;
 import com.aktarma.xml.tokenizer.tokens.elements.CssEndToken;
 import com.aktarma.xml.tokenizer.tokens.elements.CssStartToken;
 import com.aktarma.xml.tokenizer.tokens.elements.ScriptEndToken;
@@ -66,7 +66,7 @@ public class ScriptAndStylesParser {
 		lexer.addErrorListener(new Log4XANTLRErrorListener(sourceName, startLine));
 
 		final CommonTokenStream tokens = new CommonTokenStream(lexer);
-		TokenPart current = null;
+		IToken current = null;
 
 		tokens.fill();
 
@@ -83,7 +83,7 @@ public class ScriptAndStylesParser {
 					// handled by ATTR
 					break;
 				case MiniTokenizer.ATTR: {
-					ElementPart el = el(current);
+					IElement el = el(current);
 
 					if ((i + 2) < numTokens) {
 						Token val = tokens.get(i + 2);
@@ -179,7 +179,7 @@ public class ScriptAndStylesParser {
 						if (current instanceof InlineCodeToken) {
 							InlineCodeToken el = (InlineCodeToken) current;
 							el.addSnippet(token.getText());
-						} else if (current instanceof AbstractElementToken) {
+						} else if (current instanceof AbstractElement) {
 							el(current).addPart(new ElInvalidPart(token.getLine(), token.getCharPositionInLine(), el(current), token.getText()));
 						} else {
 							throw new RuntimeException("Expecting either an inline code or a element token, not:" + current);
@@ -197,9 +197,9 @@ public class ScriptAndStylesParser {
 		}
 	}
 
-	private static ElementPart el(TokenPart current) {
-		if (current instanceof AbstractElementToken) {
-			return (ElementPart) current;
+	private static IElement el(IToken current) {
+		if (current instanceof AbstractElement) {
+			return (IElement) current;
 		} else {
 			throw new RuntimeException("Expected a current element token but was:" + current);
 		}

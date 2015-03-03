@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.aktarma.xml.tokenizer.tokens.TokenPart;
+import com.aktarma.xml.tokenizer.tokens.IToken;
 import com.aktarma.xml.tokenizer.tokens.TokenType;
 
 public class TokenChainSink extends AbstractTokenVisitor {
@@ -40,7 +40,7 @@ public class TokenChainSink extends AbstractTokenVisitor {
 	}
 
 	@Override
-	protected boolean dispatch(TokenPart token) {
+	protected boolean dispatch(IToken token) {
 		if (sinks.size() != 0) {
 			for (TokenVisitor s : sinks) {
 				if (!TokenType.visitType(s, token)) {

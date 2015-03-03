@@ -3,7 +3,7 @@ package com.aktarma.xml.tokenizer.tokens.parts;
 //import java.util.regex.Matcher;
 //import java.util.regex.Pattern;
 
-import com.aktarma.xml.tokenizer.tokens.ElementPart;
+import com.aktarma.xml.tokenizer.tokens.IElement;
 import com.aktarma.xml.tokenizer.tokens.TokenType;
 
 public class ElAttritbutePart extends AbstractElementPart {
@@ -16,7 +16,7 @@ public class ElAttritbutePart extends AbstractElementPart {
     private String operator = null;
     private String value = null;
     
-    public ElAttritbutePart(int line, int charpos, ElementPart parent, String name, String operator, String value) {
+    public ElAttritbutePart(int line, int charpos, IElement parent, String name, String operator, String value) {
         super(line, charpos, parent, TokenType.ATTRVAL);
         this.name = name;
         this.operator = operator;
