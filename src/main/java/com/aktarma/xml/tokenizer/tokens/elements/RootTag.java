@@ -80,10 +80,6 @@ public class RootTag implements INsElement{
 	}
 
 	@Override
-	public void setSibling(INsElement sibling) {
-	}
-
-	@Override
 	public INsElement getParent() {
 		return null;
 	}
@@ -115,5 +111,14 @@ public class RootTag implements INsElement{
 
 	@Override
 	public void setParent(IElement parent) {
+	}
+
+	@Override
+	public void setSibling(IElement sibling) {
+	}
+
+	@Override
+	public IElement getSibling() {
+		return null;
 	}
 }

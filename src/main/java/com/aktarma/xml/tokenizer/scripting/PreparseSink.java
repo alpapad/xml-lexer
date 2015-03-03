@@ -32,7 +32,6 @@ public class PreparseSink extends AbstractTokenVisitor {
 		updateRelationships(token);
 		return super.visit(token);
 	}
-
 	
 	private void push(IElement element) {
 		elementStack.add(0, element);
@@ -97,13 +96,10 @@ public class PreparseSink extends AbstractTokenVisitor {
 			IElement tkn = peek();
 			assert(tkn != null);
 			assert(tkn.isStart());
-			assert(tkn.getTagName().equals(token.getTagName()));
+			assert tkn.getTagName().equals(token.getTagName()) : tkn.getTagName() + ":" + token.getTagName();
 			tkn = pop();
-			
-			if(tkn instanceof INsElement){
-				token.setSibling((INsElement)tkn);
-				((INsElement)tkn).setSibling(token);
-			}
+			token.setSibling(tkn);
+			tkn.setSibling(token);
 			token.setParent(tkn.getParent());
 		}
 	}

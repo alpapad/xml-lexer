@@ -5,8 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.aktarma.xml.tokenizer.tokens.AbstractToken;
-import com.aktarma.xml.tokenizer.tokens.ITagPart;
 import com.aktarma.xml.tokenizer.tokens.IElement;
+import com.aktarma.xml.tokenizer.tokens.ITagPart;
 import com.aktarma.xml.tokenizer.tokens.TokenType;
 import com.aktarma.xml.tokenizer.tokens.parts.ElAttritbutePart;
 
@@ -30,6 +30,8 @@ public abstract class AbstractElement extends AbstractToken implements IElement 
 	private LinkedHashMap<String, ITagPart> indexedParts = null;
 
 	private IElement parent;
+	
+	private IElement sibling;
 	
 	private List<IElement> children = new ArrayList<>();
 	
@@ -152,6 +154,15 @@ public abstract class AbstractElement extends AbstractToken implements IElement 
 	@Override
 	public List<IElement> getChildren() {
 		return children;
+	}
+	
+	@Override
+	public void setSibling(IElement el) {
+		this.sibling = el;
+	}
+
+	public IElement getSibling() {
+		return sibling;
 	}
 	
 	@Override

@@ -6,9 +6,6 @@ import com.aktarma.xml.tokenizer.tokens.TokenType;
 public class NsTagStartToken extends AbstractElement implements INsElement{
 	private String ns;
 	
-	private INsElement sibling;
-
-	
     public NsTagStartToken(int line, int charpos, String tagName) {
         super(line, charpos, TokenType.NS_TAG_START);
         this.open = TAG_OPEN;
@@ -30,14 +27,5 @@ public class NsTagStartToken extends AbstractElement implements INsElement{
 	@Override
 	public boolean isStart() {
 		return true;
-	}
-
-	@Override
-	public void setSibling(INsElement el) {
-		this.sibling = el;
-	}
-
-	public INsElement getSibling() {
-		return sibling;
 	}
 }

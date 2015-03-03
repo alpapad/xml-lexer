@@ -46,4 +46,8 @@ public interface IElement extends IToken{
 	void addChild(IElement child);
 	
 	List<IElement> getChildren();
+	
+	void setSibling(IElement sibling);
+	
+	IElement getSibling();
 }

@@ -6,7 +6,6 @@ import com.aktarma.xml.tokenizer.tokens.TokenType;
 public class NsTagEndToken extends AbstractElement implements INsElement {
 	private String ns;
 
-	private INsElement sibling;
 
 	public NsTagEndToken(int line, int charpos, String tagName) {
 		super(line, charpos, TokenType.NS_TAG_END);
@@ -29,14 +28,5 @@ public class NsTagEndToken extends AbstractElement implements INsElement {
 	@Override
 	public boolean isStart() {
 		return false;
-	}
-
-	@Override
-	public void setSibling(INsElement el) {
-		this.sibling = el;
-	}
-
-	public INsElement getSibling() {
-		return sibling;
 	}
 }

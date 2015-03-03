@@ -7,28 +7,37 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.aktarma.xml.tokenizer.tokens.IElement;
 import com.aktarma.xml.tokenizer.tokens.INsElement;
 import com.aktarma.xml.tokenizer.tokens.parts.ElAttritbutePart;
 
 public class TagBuilder {
 
-	private final INsElement token;
+	private final IElement token;
 
 	private final Map<String,String> attrs = new LinkedHashMap<>();
 	private String tagName;
 	
-	public TagBuilder(INsElement token) {
+	public TagBuilder(IElement token) {
 		super();
 		this.token = token;
-		this.tagName = token.getNs() + ':' + token.getTagName();
+		if(token instanceof INsElement) {
+			this.tagName = ((INsElement)token).getNs() + ':' + token.getTagName();
+		} else {
+			this.tagName = token.getTagName();
+		}
 	}
 
-	public static TagBuilder start(INsElement token) {
+	public static TagBuilder start(IElement token) {
 		return new TagBuilder(token);
 	}
 
 	public TagBuilder tag() {
-		this.tagName = token.getNs() + ':' + token.getTagName();
+		if(token instanceof INsElement) {
+			this.tagName = ((INsElement)token).getNs() + ':' + token.getTagName();
+		} else {
+			this.tagName = token.getTagName();
+		}
 		return this;
 	}
 
@@ -108,7 +117,10 @@ public class TagBuilder {
 	}
 
 	public String ns() {
-		return token.getNs();
+		if(token instanceof INsElement) {
+			return  ((INsElement)token).getNs();
+		}
+		return "";
 	}
 
 	public boolean exists(String name) {

@@ -63,6 +63,11 @@ public abstract class AbstractTokenVisitor implements TokenVisitor {
 	}
 
 	@Override
+	public boolean visit(TagStartToken token) {
+		return dispatch(token);
+	}
+	
+	@Override
 	public boolean visit(TagEndToken token) {
 		return dispatch(token);
 	}
@@ -87,10 +92,7 @@ public abstract class AbstractTokenVisitor implements TokenVisitor {
 		return dispatch(token);
 	}
 
-	@Override
-	public boolean visit(TagStartToken token) {
-		return dispatch(token);
-	}
+
 
 	@Override
 	public boolean visit(SEAWSToken token) {
